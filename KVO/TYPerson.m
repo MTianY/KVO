@@ -10,9 +10,12 @@
 
 @implementation TYPerson
 
+- (void)setAge:(int)age {
+    _age = age;
+}
+
 - (void)setName:(NSString *)name {
     _name = name;
-    
 }
 
 @end

@@ -27,6 +27,8 @@
 		4C4E15352124E96D00BA1C70 /* TYBaseViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TYBaseViewController.m; sourceTree = "<group>"; };
 		4C4E15372124E98400BA1C70 /* TYPerson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TYPerson.h; sourceTree = "<group>"; };
 		4C4E15382124E98400BA1C70 /* TYPerson.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TYPerson.m; sourceTree = "<group>"; };
+		4C4E153A2126398900BA1C70 /* NSKVONotifying_TYPerson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSKVONotifying_TYPerson.h; sourceTree = "<group>"; };
+		4C4E153B2126398900BA1C70 /* NSKVONotifying_TYPerson.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSKVONotifying_TYPerson.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,8 @@
 				4C4E151F2124E94200BA1C70 /* AppDelegate.m */,
 				4C4E15342124E96D00BA1C70 /* TYBaseViewController.h */,
 				4C4E15352124E96D00BA1C70 /* TYBaseViewController.m */,
+				4C4E153A2126398900BA1C70 /* NSKVONotifying_TYPerson.h */,
+				4C4E153B2126398900BA1C70 /* NSKVONotifying_TYPerson.m */,
 				4C4E15372124E98400BA1C70 /* TYPerson.h */,
 				4C4E15382124E98400BA1C70 /* TYPerson.m */,
 				4C4E15272124E94400BA1C70 /* Assets.xcassets */,

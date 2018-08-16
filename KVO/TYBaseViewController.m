@@ -8,6 +8,7 @@
 
 #import "TYBaseViewController.h"
 #import "TYPerson.h"
+#import <objc/runtime.h>
 
 #define TYPERSON_KEYPATH_FOR_PERSON_Age_PROPERTY @"age"
 #define TYPERSON_CONTEXT_FOR_PERSON_Age_PROPERTY @"personAgeProperty_Context"
@@ -33,8 +34,13 @@
     person2.age = 15;
     self.person2 = person2;
     
+    NSLog(@"监听之前对应的类对象:%@---%@",object_getClass(person), object_getClass(person2));
+    NSLog(@"监听之前实例对象对应的方法内存地址: %p--%p",[person methodForSelector:@selector(setAge:)], [person2 methodForSelector:@selector(setAge:)]);
+    
     [person addObserver:self forKeyPath:TYPERSON_KEYPATH_FOR_PERSON_Age_PROPERTY options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:TYPERSON_CONTEXT_FOR_PERSON_Age_PROPERTY];
     
+    NSLog(@"监听之后对应的类对象:%@---%@",object_getClass(person), object_getClass(person2));
+    NSLog(@"监听之后实例对象对应的方法内存地址: %p--%p",[person methodForSelector:@selector(setAge:)], [person2 methodForSelector:@selector(setAge:)]);
 }
 
 - (void)dealloc
@@ -45,6 +51,7 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     [self.person setAge:20];
+    [self.person setName:@"666"];
     
     [self.person2 setAge:30];
 }

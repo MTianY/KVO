@@ -75,7 +75,7 @@
 
 ```
 
-## 3.KVO 的实现原理
+## 3.KVO 的实现原理分析
 
 为了验证 KVO 的实现原理,我们又创建了一个 TYPerson 的实例对象, person2.但是并没有对 person2进行监听.其他代码逻辑同 person 一样.这时点击控制器的 view, 看到打印结果.`只有 person 设置监听的属性有打印变化的值.`
 
@@ -142,5 +142,62 @@
     
 - 而没有添加监听的 person2 对象,其 isa 指针指向的仍是 TYPerson 这个类.
 
+## 4.验证 NSKVONotifying_TYPerson 这个类
+
+**方式1**
+
+- 自己主动生成`NSKVONotifying_TYPerson`这个后,再次点击控制器的 view, 发现的结果是`KVO监听并没有被调用`.控制台会打印这样一条信息:
+
+```c
+KVO failed to allocate class pair for name NSKVONotifying_TYPerson, automatic key-value observing will not work for this class
+```
+
+- 如果把这个类删掉或不让它参与编译,发现 KVO 又可以正常调用了.
+- 由此可以说明, KVO 在运行时确实是生成了一个`NSKVONotifying_TYPerson`这么一个子类,来对监听做处理.
+
+**方式2**
+
+```objc
+NSLog(@"监听之前对应的类对象:%@---%@",object_getClass(person), object_getClass(person2));]
+[person addObserver:self forKeyPath:TYPERSON_KEYPATH_FOR_PERSON_Age_PROPERTY options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:TYPERSON_CONTEXT_FOR_PERSON_Age_PROPERTY];
+NSLog(@"监听之后对应的类对象:%@---%@",object_getClass(person), object_getClass(person2));
+```
+
+- 监听之前和之后,对 person 和 person2的类对象打印:
+
+```objc
+监听之前对应的类对象:TYPerson---TYPerson
+
+监听之后对应的类对象:NSKVONotifying_TYPerson---TYPerson
+```
+
+- 被监听的person 其类对象发生了变化
+
+**方式3**
+
+```objc
+NSLog(@"监听之前实例对象对应的方法内存地址: %p--%p",[person methodForSelector:@selector(setAge:)], [person2 methodForSelector:@selector(setAge:)]);
+[person addObserver:self forKeyPath:TYPERSON_KEYPATH_FOR_PERSON_Age_PROPERTY options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:TYPERSON_CONTEXT_FOR_PERSON_Age_PROPERTY];
+NSLog(@"监听之后实例对象对应的方法内存地址: %p--%p",[person methodForSelector:@selector(setAge:)], [person2 methodForSelector:@selector(setAge:)]);
+```
+
+- 打印结果如下:
+
+```c
+监听之前实例对象对应的方法内存地址: 0x10039a4a0--0x10039a4a0
+监听之后实例对象对应的方法内存地址: 0x100747f8e--0x10039a4a0
+```
+
+- 发现 person 对象在监听之后,其 isa 指针指向的 class 对象中的对象方法(setAge:)的内存地址发生了变化
+- 在 `touchBegin` 方法处打断点,调出`lldb`模式,通过`p (IMP)方法内存地址`打印出其方法名具体是什么
+
+```lldb
+(lldb) p (IMP)0x10039a4a0
+(IMP) $0 = 0x000000010039a4a0 (KVO`-[TYPerson setAge:] at TYPerson.m:13)
+(lldb) p (IMP)0x100747f8e
+(IMP) $1 = 0x0000000100747f8e (Foundation`_NSSetIntValueAndNotify)
+```
+
+- 由此也可以看到,被监听之后的 person 对象,其 setAge:方法在调用时其实是走了`Foundation`的`__NSSetIntValueAndNotify`方法.
 
 
