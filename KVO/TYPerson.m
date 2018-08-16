@@ -10,4 +10,9 @@
 
 @implementation TYPerson
 
+- (void)setName:(NSString *)name {
+    _name = name;
+    
+}
+
 @end
