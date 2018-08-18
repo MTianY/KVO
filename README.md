@@ -200,4 +200,36 @@ NSLog(@"监听之后实例对象对应的方法内存地址: %p--%p",[person met
 
 - 由此也可以看到,被监听之后的 person 对象,其 setAge:方法在调用时其实是走了`Foundation`的`__NSSetIntValueAndNotify`方法.
 
+## 5.查看 NSKVONotifying_TYPerson 和 TYPerson 两个类对象中的对象方法有哪些?
+
+- 要想看类对象中所有对象的方法名称.拿到其方法列表中的方法打印出就行
+- 下面通过 runtime 方法获取类对象中的方法名称
+
+```objc
+- (void)logMethodNameForClassObject:(Class)class {
+    unsigned int outCount;
+    Method *methodList = class_copyMethodList(class, &outCount);
+    NSMutableString *methodNamesMutString = [NSMutableString string];
+    for(int i = 0; i < outCount; i++) {
+    Method method = methodList[i];
+    NSString *methodName = NSStringFromSelector(method_getName(method));
+    [methodNamesMutString appendString:methodName];
+    [methodNamesMutString appendString:@", "];
+    }
+    free(methodList);
+}
+
+NSLog(@"类对象: %@---方法名: %@\n",class,methodNamesMutString);
+```
+
+- 打印结果如下:
+- 类对象 `NSKVONotifying_TYPerson` 中包含的方法有:
+    - `setAge:`
+    - `class` 
+    - `dealloc`
+    - `_isKVOA`
+
+- 类对象`TYPerson`中包含的方法有:
+    - `setAge:`
+    - `age` 
 

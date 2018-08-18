@@ -41,6 +41,10 @@
     
     NSLog(@"监听之后对应的类对象:%@---%@",object_getClass(person), object_getClass(person2));
     NSLog(@"监听之后实例对象对应的方法内存地址: %p--%p",[person methodForSelector:@selector(setAge:)], [person2 methodForSelector:@selector(setAge:)]);
+    
+    [self logMethodNameForClassObject:object_getClass(self.person)];
+    [self logMethodNameForClassObject:object_getClass(self.person2)];
+    
 }
 
 - (void)dealloc
@@ -51,7 +55,6 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     [self.person setAge:20];
-    [self.person setName:@"666"];
     
     [self.person2 setAge:30];
 }
@@ -62,5 +65,23 @@
         NSLog(@"监听到%@属性的改变:%@",object,change);
     }
 }
+
+#pragma mark - 打印类对象中所有的对象方法名称
+- (void)logMethodNameForClassObject:(Class)class {
+    unsigned int outCount;
+    Method *methodList = class_copyMethodList(class, &outCount);
+    NSMutableString *methodNamesMutString = [NSMutableString string];
+    for (int i = 0; i < outCount; i++) {
+        Method method = methodList[i];
+        NSString *methodName = NSStringFromSelector(method_getName(method));
+        [methodNamesMutString appendString:methodName];
+        [methodNamesMutString appendString:@", "];
+    }
+    free(methodList);
+    
+    NSLog(@"类对象: %@---方法名: %@\n",class,methodNamesMutString);
+    
+}
+
 
 @end
