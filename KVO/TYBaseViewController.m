@@ -28,10 +28,12 @@
     
     TYPerson *person = [[TYPerson alloc] init];
     self.person = person;
-    person.age = 10;
+//    person.age = 10;
+    
+    person -> age = 10;
     
     TYPerson *person2 = [[TYPerson alloc] init];
-    person2.age = 15;
+//    person2.age = 15;
     self.person2 = person2;
     
     NSLog(@"监听之前对应的类对象:%@---%@",object_getClass(person), object_getClass(person2));
@@ -54,9 +56,15 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
-    [self.person setAge:20];
+//    [self.person setAge:20];
+//
+//    [self.person2 setAge:30];
     
-    [self.person2 setAge:30];
+    [self.person willChangeValueForKey:@"age"];
+    self.person -> age = 1;
+    [self.person didChangeValueForKey:@"age"];
+  
+    
 }
 
 // 监听方法

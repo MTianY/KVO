@@ -233,3 +233,34 @@ NSLog(@"类对象: %@---方法名: %@\n",class,methodNamesMutString);
     - `setAge:`
     - `age` 
 
+
+## 6.KVO 的本质是什么?
+
+- KVO 能实现的本质就是修改了 set 方法的实现.
+- 那么我们将 person 对象原先的 set 方法实现屏蔽掉,新增一个暴露的成员变量`age`.
+- 实现如下方法,KVO 是否可以成功监听`age`的变化呢?
+
+```objc
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    self.person -> age = 1;
+}
+```
+
+- `当然是不能.`
+- 因为上面并没有调用 person 的 set 方法.
+- 那么按上面的方式如何成功调用 KVO?
+
+```objc
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event { 
+    [self.person willChangeValueForKey:@"age"];
+    self.person -> age = 1;
+    [self.person didChangeValueForKey:@"age"];
+}
+```
+
+- 我们要手动添加两行代码:`willChange..`和`didChange...`
+- 因为 KVO 的本质就是将 person 的 isa 指针,指向了动态生成的 NSKVONotifying_TYPerson 这个类.然后调用其类对象中的 set方法.这个 set 方法其实现流程大致为:
+    - 调用 `willChangeValueForKey:...` 方法
+    - 调用父类TYPerson 的`set`方法,`真正的改变值`.
+    - 调用`didChangeValueForKey...`确定改过值之后,调用控制器的`observer....`监听方法.
+

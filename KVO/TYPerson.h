@@ -8,8 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TYPerson : NSObject
+@interface TYPerson : NSObject {
+    @public
+    int age;
+}
 
-@property (nonatomic, assign) int age;
+//@property (nonatomic, assign) int age;
 
 @end
